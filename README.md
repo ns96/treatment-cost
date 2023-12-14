@@ -47,7 +47,6 @@ Contributors names and contact info
 
 * Cameron Cullen
 * Eric Llorente
-* Matt Lantin
 * Nathan Stevens 
 
 ## Version History
@@ -75,4 +74,5 @@ Various frameworks, libraries, and database tools/engines used:
 * [SQLAlchemy](https://www.sqlalchemy.org/)
 * [SQlite3](https://www.sqlite.org/index.html)
 * [SQLiteStudio](https://sqlitestudio.pl/)
-* [PostgresSQL](https://www.postgresql.org/)
+* [DB Browser for SQLite](https://sqlitebrowser.org/)
+* [PostgreSQL](https://www.postgresql.org/)
