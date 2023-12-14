@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Treatment Charges Across the US</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- D3 stuff -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  
+  <!-- Bootstrap 5 stuff -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Add the leaftlet stuff https://leafletjs.com/examples/choropleth/ -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <style>
+    #map { width: 1000px; height: 600px; } 
+    .info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; } 
+    .legend { text-align: left; line-height: 18px; color: #555; } .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
+  </style>
+  
+  <!-- Grid.js  -->
+  <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+</head>
+<body>
+
+<div class="container-fluid p-5 bg-primary text-white text-center">
+  <h1>Treatment Charges Across the U.S.</h1>
+  <p>Version: {{version}} || Dataset Version: {{year}}</p> 
+</div>
+  
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-sm-2">
+      <h3>Heart</h3>
+      <p><button type="button" class="btn btn-info" value="HEART">Load Data</button></p>
+    </div>
+    <div class="col-sm-2">
+      <h3>Head+</h3>
+      <p><button type="button" class="btn btn-info" value="HEAD NECK BACK">Load Data</button></p>
+    </div>
+    <div class="col-sm-2">
+      <h3>Digestive</h3>        
+      <p><button type="button" class="btn btn-info" value="DIGESTIVE">Load Data</button></p>
+    </div>
+    <div class="col-sm-2">
+      <h3>Limbs</h3>        
+      <p><button type="button" class="btn btn-info" value="LIMBS">Load Data</button></p>
+    </div>
+    <div class="col-sm-2">
+      <h3>Disease</h3>        
+      <p><button type="button" class="btn btn-info" value="DISEASE">Load Data</button></p>
+    </div>
+    <div class="col-sm-2">
+      <h3>Urinary</h3>        
+      <p><button type="button" class="btn btn-info" value="URINARY">Load Data</button></p>
+    </div
+  </div>
+  <div class="row">
+    <div class="col-sm-2">
+      <h3>Lung</h3>
+      <p><button type="button" class="btn btn-info" value="LUNG">Load Data</button></p>
+    </div>
+    <div class="col-sm-2">
+      <h3>Cancer</h3>
+      <p><button type="button" class="btn btn-info" value="CANCER">Load Data</button></p>
+    </div>
+    <div class="col-sm-2">
+      <h3>Skin</h3>        
+      <p><button type="button" class="btn btn-info" value="SKIN">Load Data</button></p>
+    </div>
+    <div class="col-sm-2">
+      <h3>Glands</h3>        
+      <p><button type="button" class="btn btn-info" value="GLAND">Load Data</button></p>
+    </div>
+    <div class="col-sm-2">
+      <h3>Other</h3>        
+      <p><button type="button" class="btn btn-info" value="Other">Load Data</button></p>
+    </div>
+    <div class="col-sm-2">
+      <!--Add more buttons -->
+    </div>
+  </div>
+</div>
+
+<div class="container mt-5">
+  <div class="row">  
+    <div class="col-sm-12">      
+      <label for="drg_option" class="form-label">DRG:</label>
+      <select id="drg_option" name="drg_option">
+        <option value="1">001 - HEART TRANSPLANT OR IMPLANT OF HEART ASSIST SYSTEM W MCC</option>
+        <option value="2">002 - HEART TRANSPLANT OR IMPLANT OF HEART ASSIST SYSTEM W/O MCC</option>
+      </select>  
+    </div>
+    <!--
+    <div class="col-sm-4">      
+      <label for="state" class="form-label">State:</label>
+      <select id="state" name="state">
+        <option value="N/A">N/A</option>
+        <option value="AK">Alaska</option>
+        <option value="AL">Alabama</option>
+        <option value="AR">Arkansas</option>
+        <option value="AZ">Arizona</option>
+        <option value="CA">California</option>
+        <option value="CO">Colorado</option>
+        <option value="CT">Connecticut</option>
+        <option value="DC">District of Columbia</option>
+        <option value="DE">Delaware</option>
+        <option value="FL">Florida</option>
+        <option value="GA">Georgia</option>
+        <option value="HI">Hawaii</option>
+        <option value="IA">Iowa</option>
+        <option value="ID">Idaho</option>
+        <option value="IL">Illinois</option>
+        <option value="IN">Indiana</option>
+        <option value="KS">Kansas</option>
+        <option value="KY">Kentucky</option>
+        <option value="LA">Louisiana</option>
+        <option value="MA">Massachusetts</option>
+        <option value="MD">Maryland</option>
+        <option value="ME">Maine</option>
+        <option value="MI">Michigan</option>
+        <option value="MN">Minnesota</option>
+        <option value="MO">Missouri</option>
+        <option value="MS">Mississippi</option>
+        <option value="MT">Montana</option>
+        <option value="NC">North Carolina</option>
+        <option value="ND">North Dakota</option>
+        <option value="NE">Nebraska</option>
+        <option value="NH">New Hampshire</option>
+        <option value="NJ">New Jersey</option>
+        <option value="NM">New Mexico</option>
+        <option value="NV">Nevada</option>
+        <option value="NY">New York</option>
+        <option value="OH">Ohio</option>
+        <option value="OK">Oklahoma</option>
+        <option value="OR">Oregon</option>
+        <option value="PA">Pennsylvania</option>
+        <option value="PR">Puerto Rico</option>
+        <option value="RI">Rhode Island</option>
+        <option value="SC">South Carolina</option>
+        <option value="SD">South Dakota</option>
+        <option value="TN">Tennessee</option>
+        <option value="TX">Texas</option>
+        <option value="UT">Utah</option>
+        <option value="VA">Virginia</option>
+        <option value="VT">Vermont</option>
+        <option value="WA">Washington</option>
+        <option value="WI">Wisconsin</option>
+        <option value="WV">West Virginia</option>
+        <option value="WY">Wyoming</option>
+      </select>      
+    </div> -->
+  </div>
+  
+  <div class="row"> 
+    <div class="col-sm-8">
+      <button class="btn btn-success" value="update_map">Update Map</button> 
+      <!--<button class="btn btn-success" value="plot_data">Show Plots</button> -->  
+    </div>  
+  </div>
+</div>
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-sm-8"> 
+      <div class="alert alert-info" id="drg">
+        DRG Difinition
+      </div>  
+    </div>  
+    
+    <div class="col-sm-2">
+      <div class="alert alert-success" id="lowest">
+        <strong>Lowest Cost: LL</strong>
+      </div> 
+    </div> 
+    
+    <div class="col-sm-2"> 
+    <div class="alert alert-danger" id="highest">
+      <strong>Higest Cost: HH</strong>
+    </div> 
+    </div>     
+  </div>
+</div>
+
+<!--Add our map now based on https://leafletjs.com/examples/choropleth/ -->
+<div class="container mt-5">
+  <div class="row d-flex justify-content-center" id="usmap">
+    <div class="col-md-12" id="map"></div>
+  </div>
+</div>
+
+<!-- Add the Grid.js Table with state data -->
+<div class="container mt-5">
+  <div class="row d-flex justify-content-center">
+    <div class="col-md-12" id="gtable"></div>
+  </div>
+</div>
+
+<!-- Choropleth scripts -->
+<script type="text/javascript" src="/static/data/us-states.js"></script>
+<script type="text/javascript" src="/static/my_choropleth.js"></script>
+
+<!-- Grid.js script -->
+<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+
+<!-- Load our script -->
+<script type="text/javascript" src="/static/app.js"></script>
+</body>
+</html>
